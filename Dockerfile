@@ -2,7 +2,7 @@
 #   docker build -t ss-shiny-devel .
 #
 # To run with the built-in shiny-examples:
-#   docker run --rm -p 3838:3838 --name ss ss-shiny-devel
+#   docker run --rm -p 3333:3333 --name ss ss-shiny-devel
 
 FROM ubuntu:16.04
 
@@ -27,7 +27,8 @@ RUN add-apt-repository "deb http://cran.r-project.org/bin/linux/ubuntu $(lsb_rel
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 
 # Install basic stuff and R
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+&& apt-get install -y \
     sudo \
     git \
     vim-tiny \
@@ -36,7 +37,18 @@ RUN apt-get update && apt-get install -y \
     r-base \
     r-base-dev \
     r-recommended \
-    fonts-texgyre
+    fonts-texgyre \
+    gdebi-core \
+    pandoc \
+    pandoc-citeproc \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssl-dev \
+    libxml2-dev \
+&& apt-get clean \
+&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+&& rm -rf /var/lib/apt/lists/*
 
 RUN echo 'options(\n\
   repos = c(CRAN = "https://mirrors.ustc.edu.cn/CRAN/"),\n\
@@ -54,14 +66,6 @@ RUN useradd --create-home --shell /bin/bash docker \
 # Shiny Server
 # =====================================================================
 
-RUN apt-get install -y \
-    gdebi-core \
-    pandoc \
-    pandoc-citeproc \
-    libcurl4-gnutls-dev \
-    libcairo2-dev \
-    libxt-dev \
-    libssl-dev
 
 # Download and install shiny server
 RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "version.txt" && \
@@ -82,13 +86,12 @@ CMD ["/usr/bin/shiny-server.sh"]
 # Shiny Examples
 # =====================================================================
 
-RUN apt-get update && apt-get install -y \
-    libxml2-dev
+# needed to be added
 
-RUN R -e "install.packages(c('devtools', 'packrat'))"
-
+# RUN R -e "install.packages(c('devtools', 'packrat'))"
+# 
 # For deploying apps from a container
-RUN R -e "devtools::install_github('rstudio/rsconnect')"
+# RUN R -e "devtools::install_github('rstudio/rsconnect')"
 
 # Install shiny-examples
 # RUN cd /srv && \
@@ -99,4 +102,4 @@ RUN R -e "devtools::install_github('rstudio/rsconnect')"
 #     rm master.zip
 # 
 # Autodetect packages needed for the examples (will install from CRAN)
-RUN R -e "install.packages(packrat:::dirDependencies('/srv/shiny-server'))"
+# RUN R -e "install.packages(packrat:::dirDependencies('/srv/shiny-server'))"
