@@ -72,7 +72,7 @@ RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubu
     R -e "install.packages(c('shiny', 'rmarkdown'))" && \
     cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/
 
-EXPOSE 3838
+EXPOSE 3333
 
 COPY shiny-server.sh /usr/bin/shiny-server.sh
 
@@ -100,12 +100,3 @@ RUN R -e "devtools::install_github('rstudio/rsconnect')"
 # 
 # Autodetect packages needed for the examples (will install from CRAN)
 RUN R -e "install.packages(packrat:::dirDependencies('/srv/shiny-server'))"
-
-# Install latest shiny from GitHub
-RUN R -e "devtools::install_github('rstudio/shiny')"
-
-EXPOSE 3333
-
-COPY shiny-server.sh /usr/bin/shiny-server.sh
-
-CMD ["/usr/bin/shiny-server.sh"]
