@@ -11,7 +11,7 @@ This Dockerfile allows you to run the latest version of Shiny from GitHub in Shi
 To build the Docker image, start in the shiny-examples directory and run:
 
 ```sh
-docker build -t ss-shiny-devel docker/
+docker build -t ss-shiny-devel .
 ```
 
 ### Running the image
@@ -19,21 +19,21 @@ docker build -t ss-shiny-devel docker/
 Option 1: Run Shiny Server with the already-installed shiny-examples:
 
 ```sh
-docker run --rm -p 3838:3838 --name ss ss-shiny-devel
+docker run --rm -p 3333:3333 --name ss ss-shiny-devel
 ```
 
 Option 2: Run Shiny Server with the shiny-examples directory mounted from the host. This allows you to modify the examples from the host:
 
 ```sh
 # Start in the shiny-examples directory
-docker run --rm -p 3838:3838 -v $(pwd):/srv/shiny-server --name ss ss-shiny-devel
+docker run --rm -p 3333:3333 -v $(pwd):/srv/shiny-server --name ss ss-shiny-devel
 ```
 
 Option 3: Run Shiny Server with shiny-examples directory mounted from the host, as well as the shiny source directory mounted from the host. This lets you modify the Shiny source code on the host and install it on the Shiny Server:
 
 ```sh
 # Start in the parent directory of shiny and shiny-examples
-docker run --rm -p 3838:3838 \
+docker run --rm -p 3333:3333 \
     -v $(pwd)/shiny-examples:/srv/shiny-server \
     -v $(pwd)/shiny:/shiny \
     --name ss ss-shiny-devel
