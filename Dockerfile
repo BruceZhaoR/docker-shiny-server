@@ -67,6 +67,8 @@ RUN useradd docker \
 # Shiny Server
 # =====================================================================
 
+RUN R -e "install.packages(c('shiny', 'rmarkdown', 'devtools', 'rsconnect, 'packrat'))" \
+  && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 
 # Download and install shiny server
 RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "version.txt" && \
@@ -74,7 +76,6 @@ RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubu
     wget --no-verbose "https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/shiny-server-$VERSION-amd64.deb" -O ss-latest.deb && \
     gdebi -n ss-latest.deb && \
     rm -f version.txt ss-latest.deb && \
-    R -e "install.packages(c('shiny', 'rmarkdown'))" && \
     cp -R /usr/local/lib/R/site-library/shiny/examples/* /srv/shiny-server/
 
 EXPOSE 3333
@@ -88,14 +89,6 @@ CMD ["/usr/bin/shiny-server.sh"]
 # =====================================================================
 
 # Examples needed to be added
-
-RUN apt-get update && apt-get install -y \
-    libxml2-dev
-
-RUN R -e "install.packages(c('devtools', 'packrat'))"
-
-# For deploying apps from a container
-RUN R -e "devtools::install_github('rstudio/rsconnect')"
 
 # Install shiny-examples
 # RUN cd /srv && \
