@@ -58,9 +58,10 @@ RUN echo 'options(\n\
 )' >> /etc/R/Rprofile.site
 
 # Create docker user with empty password (will have uid and gid 1000)
-RUN useradd --create-home --shell /bin/bash docker \
-    && passwd docker -d \
-    && adduser docker sudo
+RUN useradd docker \
+    && mkdir /home/docker \
+    && chown docker:docker /home/docker \
+    && addgroup docker staff
 
 # =====================================================================
 # Shiny Server
@@ -86,12 +87,15 @@ CMD ["/usr/bin/shiny-server.sh"]
 # Shiny Examples
 # =====================================================================
 
-# needed to be added
+# Examples needed to be added
 
-# RUN R -e "install.packages(c('devtools', 'packrat'))"
-# 
+RUN apt-get update && apt-get install -y \
+    libxml2-dev
+
+RUN R -e "install.packages(c('devtools', 'packrat'))"
+
 # For deploying apps from a container
-# RUN R -e "devtools::install_github('rstudio/rsconnect')"
+RUN R -e "devtools::install_github('rstudio/rsconnect')"
 
 # Install shiny-examples
 # RUN cd /srv && \
@@ -103,3 +107,6 @@ CMD ["/usr/bin/shiny-server.sh"]
 # 
 # Autodetect packages needed for the examples (will install from CRAN)
 # RUN R -e "install.packages(packrat:::dirDependencies('/srv/shiny-server'))"
+
+# Install latest shiny from GitHub
+RUN R -e "devtools::install_github('rstudio/shiny')"
