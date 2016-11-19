@@ -67,8 +67,7 @@ RUN useradd docker \
 # Shiny Server
 # =====================================================================
 
-RUN R -e "install.packages(c('shiny', 'rmarkdown', 'devtools', 'rsconnect, 'packrat'))" \
-  && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
+RUN R -e "install.packages(c('shiny', 'rmarkdown', 'devtools', 'packrat', 'rsconnect'))"
 
 # Download and install shiny server
 RUN wget --no-verbose https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION -O "version.txt" && \
